@@ -1,24 +1,12 @@
-# README
+# What
+Ruby on Rails 6 実践ガイドの実装リポジトリである。
+Dockerの環境は[こちら](https://github.com/oiax/rails6-compose)を参照。
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Description
+Baukis2 は企業向け顧客管理システムです。
 
-Things you may want to cover:
+### 推奨されるシステム環境
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+* Ubuntu 18.04
+* Ruby 2.6.4
+* PostgreSQL 11.2
