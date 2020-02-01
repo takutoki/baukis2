@@ -1,0 +1,15 @@
+@import "colors";
+@import "dimensions";
+
+div#wrapper {
+  div#container {
+    h1 {
+      margin: 0px;
+      padding: $moderate * 1.5 $moderate;
+      font-size: $large;
+      font-weight: normal;
+      background-color: $very_dary_yellow;
+      color: $light_gray;
+    }
+  }
+}
