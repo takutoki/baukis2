@@ -5,7 +5,7 @@ class AddIndexLowerEmialToStaffMembersAndAdministrators < ActiveRecord::Migratio
     add_index :administrators, "LOWER(email)", unique: true
   end
 
-   def down
+  def down
     remove_index :staff_members, name: :index_staff_members_on_LOWER_email
     remove_index :administrators, name: :index_administrators_on_LOWER_email
   end
