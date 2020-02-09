@@ -14,9 +14,9 @@ class Staff::SessionsController < Staff::Base
   def create
     @form = Staff::LoginForm.new(params[:staff_login_form])
     if @form.email.present?
-      staff_member = StaffMember.find_by("LOWER(:email) = ?", @form.email.downcase)
+      staff_member = StaffMember.find_by("LOWER(email) = ?", @form.email.downcase)
     end
-    if staff_member
+    if Staff::Authenticator.new(staff_member).authenticate(@form.password)
       session[:staff_member_id] = staff_member.id
       redirect_to :staff_root
     else
@@ -25,7 +25,7 @@ class Staff::SessionsController < Staff::Base
   end
 
   def destroy
-    session.delete(:staff_memner_id)
+    session.delete(:staff_member_id)
     redirect_to :staff_root
   end
 end
