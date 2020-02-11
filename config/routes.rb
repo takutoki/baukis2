@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   namespace :admin do
     root "top#index"
 
-    get "/login" => "session#new"
+    get "/login" => "sessions#new"
     resource :session, only: [:create, :destroy]
   end
 
