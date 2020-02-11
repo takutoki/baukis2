@@ -23,8 +23,8 @@ describe 'Staff::Authenticator' do
 
   context '停止フラグがtrueのユーザー' do
     let(:staff_member) { build(:staff_member, suspended: true) }
-    it 'falseが返る' do
-      expect(Staff::Authenticator.new(staff_member).authenticate("pw")).to be_falsey
+    it 'trueが返る' do
+      expect(Staff::Authenticator.new(staff_member).authenticate("pw")).to be_truthy
     end
   end
 
