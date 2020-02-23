@@ -1,6 +1,6 @@
 require 'faker'
 
 Administrator.create!(
-  email: Faker::Internet.email,
+  email: "admin@example.com",
   password: "foobar"
 )
