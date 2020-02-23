@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Admin::Base < ApplicationController
 
   def current_administrator
