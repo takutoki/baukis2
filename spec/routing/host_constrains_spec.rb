@@ -26,6 +26,17 @@ RSpec.describe 'ルーティング' do
     end
   end
 
+  context '顧客トップページパス(example.com)にGETリクエスト' do
+    url = "http://#{config[:customer][:host]}/#{config[:customer][:path]}"
+    it 'OK' do
+      expect(get: url).to route_to(
+        host: config[:customer][:host],
+        controller: 'customer/top',
+        action: 'index'
+      )
+    end
+  end
+
   context 'ホスト名をbaukis2.example.com以外にしてリクエスト' do
     it 'ルーティング対象外' do
       expect(get: 'http://foo.example.jp').not_to be_routable
