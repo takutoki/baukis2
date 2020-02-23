@@ -1,5 +1,3 @@
-require 'faker'
-
 StaffMember.create!(
   email: "hoge@example.com",
   family_name: "山田",

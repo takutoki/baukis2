@@ -1,19 +1,23 @@
 Rails.application.routes.draw do
 
-  namespace :staff, path: '' do
-    root "top#index"
+  config = Rails.application.config.baukis2
 
-    get "/login" => "sessions#new"
-    resource :session, only: %i(create destroy)
-    resource :account, except: %i(new create destroy)
+  constraints host: config[:staff][:host] do
+    namespace :staff, path: config[:staff][:path] do
+      root "top#index"
+      get "/login" => "sessions#new"
+      resource :session, only: %i(create destroy)
+      resource :account, except: %i(new create destroy)
+    end
   end
 
-  namespace :admin do
-    root "top#index"
-
-    get "/login" => "sessions#new"
-    resource :session, only: %i(create destroy)
-    resources :staff_members
+  constraints host: config[:admin][:host] do
+    namespace :admin, path: config[:admin][:path] do
+      root "top#index"
+      get "/login" => "sessions#new"
+      resource :session, only: %i(create destroy)
+      resources :staff_members
+    end
   end
 
   namespace :customer do
