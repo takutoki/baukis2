@@ -1,0 +1,9 @@
+{
+  "name": "greenbird-webapi-doc",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Greenbird Web API Document",
+  "dependencies": {
+    "redoc-cli": "^0.9.5"
+  }
+}

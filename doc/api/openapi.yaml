@@ -1,0 +1,428 @@
+openapi: 3.0.0
+info:
+  title: baukis2
+  version: '1.0'
+  description: Baukis2 は企業向け顧客管理システムです。
+  contact:
+    name: takutoki
+    url: 'https://github.com/takutoki/baukis2'
+    email: hoge@example.com
+servers:
+  - description: Baukis2 職員・管理者用のドメイン
+    url: 'http://baukis2.example.com:3000'
+  - description: Baukis2 顧客用のドメイン
+    url: 'http://example.com:3000'
+paths:
+  /:
+    get:
+      tags:
+        - staff
+      summary: /
+      description: 職員のトップページHTMLを返す
+      operationId: get-staff
+      responses:
+        '200':
+          description: OK
+          content:
+            text/html:
+              schema:
+                type: string
+                example: '<html><body>HTML text</body></html>'
+        '500':
+          description: Internal Server Error
+
+  /login:
+    get:
+      tags:
+        - staff
+      summary: /login
+      description: 職員のログインページHTMLを返す
+      operationId: get-staff-login
+      responses:
+        '200':
+          description: OK
+
+  /session:
+    post:
+      tags:
+        - staff
+      summary: /session
+      description: 職員ユーザーのログインセッションを作成する
+      operationId: post-staff-session
+      requestBody:
+        description: ログインフォームで入力された値メールアドレスとパスワード
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                staff_login_form:
+                  type: object
+                  description: ログインフォームで入力された値を格納したobject
+                  properties:
+                    email:
+                      type: string
+                      description: メールアドレス
+                      example: hoge@example.com
+                    password:
+                      type: string
+                      description: パスワード
+                      example: password
+                  required:
+                    - email
+                    - password
+      responses:
+        '201':
+          description: Created - セッションを作成(ログイン成功)
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: staff_member_id=12345; Path=/; HttpOnly
+        '500':
+          description: Internal Server Error
+    delete:
+      security:
+        - staff_member_id: []
+      tags:
+        - staff
+      summary: /session
+      description: 職員ユーザーのログインセッションを削除する
+      operationId: delete-staff-session
+      responses:
+        '200':
+          description: OK - セッションを削除(ログアウト)
+        '500':
+          description: Internal Server Error
+
+  /admin:
+    get:
+      security:
+        - administrator_id: []
+      tags:
+        - admin
+      summary: /admin
+      description: 管理者ユーザーのトップページHTMLを返す
+      operationId: get-admin
+      responses:
+        '200':
+          description: OK - ログインしているかしていないかで返すHTMLが異なる
+          content:
+            text/html:
+              schema:
+                type: string
+                example: '<html><body>HTML text</body></html>'
+        '500':
+          description: Internal Server Error
+
+  /admin/login:
+    get:
+      tags:
+        - admin
+      summary: /admin/login
+      description: 管理者ユーザーのログインページHTMLを返す
+      operationId: get-admin-login
+      responses:
+        '200':
+          description: OK
+          content:
+            text/html:
+              schema:
+                type: string
+                example: '<html><body>HTML text</body></html>'
+        '500':
+          description: Internal Server Error
+
+  /admin/session:
+    post:
+      tags:
+        - admin
+      summary: /admin/session
+      description: 管理者ユーザーのログインセッションを作成する
+      operationId: post-admin-session
+      requestBody:
+        description: ログインフォームで入力されたメールアドレスとパスワード
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                admin_login_form:
+                  type: object
+                  description: ログインフォームで入力された値を格納したobject
+                  properties:
+                    email:
+                      type: string
+                      description: メールアドレス
+                      example: hoge@example.com
+                    password:
+                      type: string
+                      description: パスワード
+                      example: password
+                  required:
+                    - email
+                    - password
+      responses:
+        '201':
+          description: Created - セッションを作成(ログイン成功)
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: administrator_id=12345; Path=/; HttpOnly
+        '500':
+          description: Internal Server Error
+    delete:
+      security:
+        - administrator_id: []
+      tags:
+        - admin
+      summary: /admin/session
+      description: 管理者ユーザーのログインセッションを削除する
+      operationId: delete-admin-session
+      responses:
+        '200':
+          description: OK - セッションを削除(ログアウト)
+        '500':
+          description: Internal Server Error
+  
+  /admin/staff_members:
+    get:
+      security:
+        - administrator_id: []
+      tags:
+        - admin
+      summary: /admin/staff_members
+      description: 職員メンバーの一覧HTMLを返す
+      operationId: get-admin-staff_members
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: Internal Server Error
+    post:
+      security:
+        - administrator_id: []
+      tags:
+        - admin
+      summary: /admin/staff_members
+      description: 職員メンバーを新規登録する
+      operationId: post-admin-staff_members
+      requestBody:
+        description: ログインフォームで入力されたメールアドレスやパスワード、職員の氏名など
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                staff_member:
+                  $ref: '#/components/schemas/new_staff_member'
+      responses:
+        '201':
+          description: Created
+        '500':
+          description: Internal Server Error
+
+  /admin/staff_members/new:
+    get:
+      security:
+        - administrator_id: []
+      tags:
+        - admin
+      summary: /admin/staff_members/new
+      description: 職員メンバーを新規登録する画面HTMLを返す
+      operationId: post-admin-staff_members-new
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: Internal Server Error
+
+  /admin/staff_members/{staff_member_id}/edit:
+    parameters:
+      - $ref: '#/components/parameters/staff_member_id'
+    get:
+      security:
+        - administrator_id: []
+      tags:
+        - admin
+      summary: /admin/staff_members/{staff_member_id}/edit
+      description: 職員メンバーを更新する画面HTMLを返す
+      operationId: get-admin-staff_members-edit
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: Internal Server Error
+
+  /admin/staff_members/{staff_member_id}:
+    parameters:
+      - $ref: '#/components/parameters/staff_member_id'
+    get:
+      security:
+        - administrator_id: []
+      tags:
+        - admin
+      summary: /admin/staff_members/{staff_member_id}
+      description: 職員メンバーの詳細画面HTMLを返す
+      operationId: get-admin-staff_members-show
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: Internal Server Error
+    put:
+      security:
+        - administrator_id: []
+      tags:
+        - admin
+      summary: /admin/staff_members/{staff_member_id}
+      description: 職員メンバーの情報を更新する
+      operationId: put-admin-staff_members-update
+      requestBody:
+        description: ログインフォームで入力されたメールアドレスや職員の氏名など
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                staff_member:
+                  $ref: '#/components/schemas/update_staff_member'
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: Internal Server Error
+    delete:
+      security:
+        - administrator_id: []
+      tags:
+        - admin
+      summary: /admin/staff_members/{staff_member_id}
+      description: 職員メンバーを削除する
+      operationId: delete-admin-staff_members-destroy
+      responses:
+        '204':
+          description: No Content 職員を削除した
+        '500':
+          description: Internal Server Error
+
+  /mypage:
+    get:
+      tags:
+        - customer
+      summary: /mypage
+      description: 顧客のトップページHTMLを返す
+      operationId: get-mypage
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: Internal Server Error
+                  
+components:
+  schemas:
+    new_staff_member:
+      title: new_staff_member
+      type: object
+      description: 新規登録職員の入力情報
+      properties:
+        email:
+          type: string
+          description: メールアドレス
+          example: hoge@example.com
+        password:
+          type: string
+          description: パスワード
+          example: foobar
+        family_name:
+          type: string
+          description: 名字
+          example: 佐藤
+        given_name:
+          type: string
+          description: 名前
+          example: 二郎
+        family_name_kana:
+          type: string
+          description: 名字カナ
+          example: サトウ
+        given_name_kana:
+          type: string
+          description: 名前カナ
+          example: ジロウ
+        start_date:
+          type: string
+          description: 開始日時
+          example: '2019/12/01'
+        end_date:
+          type: string
+          description: 終了日時
+          example: '2020/12/31'
+        suspended:
+          type: boolean
+          description: 停止フラグ
+          example: true
+    update_staff_member:
+      title: update_staff_member
+      type: object
+      description: 職員の更新情報
+      properties:
+        email:
+          type: string
+          description: メールアドレス
+          example: hoge@example.com
+        family_name:
+          type: string
+          description: 名字
+          example: 佐藤
+        given_name:
+          type: string
+          description: 名前
+          example: 二郎
+        family_name_kana:
+          type: string
+          description: 名字カナ
+          example: サトウ
+        given_name_kana:
+          type: string
+          description: 名前カナ
+          example: ジロウ
+        start_date:
+          type: string
+          description: 開始日時
+          example: '2019/12/01'
+        end_date:
+          type: string
+          description: 終了日時
+          example: '2020/12/31'
+        suspended:
+          type: boolean
+          description: 停止フラグ
+          example: true
+
+  securitySchemes:
+    staff_member_id:
+      type: apiKey
+      in: cookie
+      name: staff_member_id
+    administrator_id:
+      type: apiKey
+      in: cookie
+      name: administrator_id
+
+  parameters:
+    staff_member_id:
+      name: staff_member_id
+      in: path
+      description: 職員のメンバーID
+      required: true
+      schema:
+        type: integer
+        format: int64
+      example: 12345
+
+tags:
+  - name: admin
+  - name: customer
+  - name: staff
