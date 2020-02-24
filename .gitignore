@@ -31,5 +31,5 @@ yarn-debug.log*
 .yarn-integrity
 
 # Open API Document
-/doc/api/node_modules
+/docs/node_modules
 
