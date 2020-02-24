@@ -185,9 +185,222 @@ paths:
           description: OK - セッションを削除(ログアウト)
         '500':
           description: Internal Server Error
+  
+  /admin/staff_members:
+    get:
+      security:
+        - administrator_id: []
+      tags:
+        - admin
+      summary: /admin/staff_members
+      description: 職員メンバーの一覧HTMLを返す
+      operationId: get-admin-staff_members
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: Internal Server Error
+    post:
+      security:
+        - administrator_id: []
+      tags:
+        - admin
+      summary: /admin/staff_members
+      description: 職員メンバーを新規登録する
+      operationId: post-admin-staff_members
+      requestBody:
+        description: ログインフォームで入力されたメールアドレスやパスワード、職員の氏名など
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                staff_member:
+                  $ref: '#/components/schemas/new_staff_member'
+      responses:
+        '201':
+          description: Created
+        '500':
+          description: Internal Server Error
 
+  /admin/staff_members/new:
+    get:
+      security:
+        - administrator_id: []
+      tags:
+        - admin
+      summary: /admin/staff_members/new
+      description: 職員メンバーを新規登録する画面HTMLを返す
+      operationId: post-admin-staff_members-new
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: Internal Server Error
+
+  /admin/staff_members/{staff_member_id}/edit:
+    parameters:
+      - $ref: '#/components/parameters/staff_member_id'
+    get:
+      security:
+        - administrator_id: []
+      tags:
+        - admin
+      summary: /admin/staff_members/{staff_member_id}/edit
+      description: 職員メンバーを更新する画面HTMLを返す
+      operationId: get-admin-staff_members-edit
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: Internal Server Error
+
+  /admin/staff_members/{staff_member_id}:
+    parameters:
+      - $ref: '#/components/parameters/staff_member_id'
+    get:
+      security:
+        - administrator_id: []
+      tags:
+        - admin
+      summary: /admin/staff_members/{staff_member_id}
+      description: 職員メンバーの詳細画面HTMLを返す
+      operationId: get-admin-staff_members-show
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: Internal Server Error
+    put:
+      security:
+        - administrator_id: []
+      tags:
+        - admin
+      summary: /admin/staff_members/{staff_member_id}
+      description: 職員メンバーの情報を更新する
+      operationId: put-admin-staff_members-update
+      requestBody:
+        description: ログインフォームで入力されたメールアドレスや職員の氏名など
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                staff_member:
+                  $ref: '#/components/schemas/update_staff_member'
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: Internal Server Error
+    delete:
+      security:
+        - administrator_id: []
+      tags:
+        - admin
+      summary: /admin/staff_members/{staff_member_id}
+      description: 職員メンバーを削除する
+      operationId: delete-admin-staff_members-destroy
+      responses:
+        '204':
+          description: No Content 職員を削除した
+        '500':
+          description: Internal Server Error
+
+  /mypage:
+    get:
+      tags:
+        - customer
+      summary: /mypage
+      description: 顧客のトップページHTMLを返す
+      operationId: get-mypage
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: Internal Server Error
+                  
 components:
-  schemas: {}
+  schemas:
+    new_staff_member:
+      title: new_staff_member
+      type: object
+      description: 新規登録職員の入力情報
+      properties:
+        email:
+          type: string
+          description: メールアドレス
+          example: hoge@example.com
+        password:
+          type: string
+          description: パスワード
+          example: foobar
+        family_name:
+          type: string
+          description: 名字
+          example: 佐藤
+        given_name:
+          type: string
+          description: 名前
+          example: 二郎
+        family_name_kana:
+          type: string
+          description: 名字カナ
+          example: サトウ
+        given_name_kana:
+          type: string
+          description: 名前カナ
+          example: ジロウ
+        start_date:
+          type: string
+          description: 開始日時
+          example: '2019/12/01'
+        end_date:
+          type: string
+          description: 終了日時
+          example: '2020/12/31'
+        suspended:
+          type: boolean
+          description: 停止フラグ
+          example: true
+    update_staff_member:
+      title: update_staff_member
+      type: object
+      description: 職員の更新情報
+      properties:
+        email:
+          type: string
+          description: メールアドレス
+          example: hoge@example.com
+        family_name:
+          type: string
+          description: 名字
+          example: 佐藤
+        given_name:
+          type: string
+          description: 名前
+          example: 二郎
+        family_name_kana:
+          type: string
+          description: 名字カナ
+          example: サトウ
+        given_name_kana:
+          type: string
+          description: 名前カナ
+          example: ジロウ
+        start_date:
+          type: string
+          description: 開始日時
+          example: '2019/12/01'
+        end_date:
+          type: string
+          description: 終了日時
+          example: '2020/12/31'
+        suspended:
+          type: boolean
+          description: 停止フラグ
+          example: true
+
   securitySchemes:
     staff_member_id:
       type: apiKey
@@ -197,6 +410,17 @@ components:
       type: apiKey
       in: cookie
       name: administrator_id
+
+  parameters:
+    staff_member_id:
+      name: staff_member_id
+      in: path
+      description: 職員のメンバーID
+      required: true
+      schema:
+        type: integer
+        format: int64
+      example: 12345
 
 tags:
   - name: admin
