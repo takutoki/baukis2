@@ -8,8 +8,10 @@ info:
     url: 'https://github.com/takutoki/baukis2'
     email: hoge@example.com
 servers:
-  - description: Baukis2
+  - description: Baukis2 職員・管理者用のドメイン
     url: 'http://baukis2.example.com:3000'
+  - description: Baukis2 顧客用のドメイン
+    url: 'http://example.com:3000'
 paths:
   /:
     get:
@@ -25,7 +27,7 @@ paths:
             text/html:
               schema:
                 type: string
-                example: '<html><body>Your HTML text</body></html>'
+                example: '<html><body>HTML text</body></html>'
         '500':
           description: Internal Server Error
 
@@ -45,10 +47,10 @@ paths:
       tags:
         - staff
       summary: /session
-      description: 職員ユーザーのログインセッションを作成する(ログイン)
+      description: 職員ユーザーのログインセッションを作成する
       operationId: post-staff-session
       requestBody:
-        description: ''
+        description: ログインフォームで入力された値メールアドレスとパスワード
         content:
           application/json:
             schema:
@@ -76,7 +78,7 @@ paths:
             Set-Cookie:
               schema:
                 type: string
-                example: staff_member_id=abcde12345; Path=/; HttpOnly
+                example: staff_member_id=12345; Path=/; HttpOnly
         '500':
           description: Internal Server Error
     delete:
@@ -93,6 +95,97 @@ paths:
         '500':
           description: Internal Server Error
 
+  /admin:
+    get:
+      security:
+        - administrator_id: []
+      tags:
+        - admin
+      summary: /admin
+      description: 管理者ユーザーのトップページHTMLを返す
+      operationId: get-admin
+      responses:
+        '200':
+          description: OK - ログインしているかしていないかで返すHTMLが異なる
+          content:
+            text/html:
+              schema:
+                type: string
+                example: '<html><body>HTML text</body></html>'
+        '500':
+          description: Internal Server Error
+
+  /admin/login:
+    get:
+      tags:
+        - admin
+      summary: /admin/login
+      description: 管理者ユーザーのログインページHTMLを返す
+      operationId: get-admin-login
+      responses:
+        '200':
+          description: OK
+          content:
+            text/html:
+              schema:
+                type: string
+                example: '<html><body>HTML text</body></html>'
+        '500':
+          description: Internal Server Error
+
+  /admin/session:
+    post:
+      tags:
+        - admin
+      summary: /admin/session
+      description: 管理者ユーザーのログインセッションを作成する
+      operationId: post-admin-session
+      requestBody:
+        description: ログインフォームで入力されたメールアドレスとパスワード
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                admin_login_form:
+                  type: object
+                  description: ログインフォームで入力された値を格納したobject
+                  properties:
+                    email:
+                      type: string
+                      description: メールアドレス
+                      example: hoge@example.com
+                    password:
+                      type: string
+                      description: パスワード
+                      example: password
+                  required:
+                    - email
+                    - password
+      responses:
+        '201':
+          description: Created - セッションを作成(ログイン成功)
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: administrator_id=12345; Path=/; HttpOnly
+        '500':
+          description: Internal Server Error
+    delete:
+      security:
+        - administrator_id: []
+      tags:
+        - admin
+      summary: /admin/session
+      description: 管理者ユーザーのログインセッションを削除する
+      operationId: delete-admin-session
+      responses:
+        '200':
+          description: OK - セッションを削除(ログアウト)
+        '500':
+          description: Internal Server Error
+
 components:
   schemas: {}
   securitySchemes:
@@ -100,6 +193,10 @@ components:
       type: apiKey
       in: cookie
       name: staff_member_id
+    administrator_id:
+      type: apiKey
+      in: cookie
+      name: administrator_id
 
 tags:
   - name: admin
