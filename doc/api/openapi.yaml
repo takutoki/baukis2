@@ -1,0 +1,107 @@
+openapi: 3.0.0
+info:
+  title: baukis2
+  version: '1.0'
+  description: Baukis2 は企業向け顧客管理システムです。
+  contact:
+    name: takutoki
+    url: 'https://github.com/takutoki/baukis2'
+    email: hoge@example.com
+servers:
+  - description: Baukis2
+    url: 'http://baukis2.example.com:3000'
+paths:
+  /:
+    get:
+      tags:
+        - staff
+      summary: /
+      description: 職員のトップページHTMLを返す
+      operationId: get-staff
+      responses:
+        '200':
+          description: OK
+          content:
+            text/html:
+              schema:
+                type: string
+                example: '<html><body>Your HTML text</body></html>'
+        '500':
+          description: Internal Server Error
+
+  /login:
+    get:
+      tags:
+        - staff
+      summary: /login
+      description: 職員のログインページHTMLを返す
+      operationId: get-staff-login
+      responses:
+        '200':
+          description: OK
+
+  /session:
+    post:
+      tags:
+        - staff
+      summary: /session
+      description: 職員ユーザーのログインセッションを作成する(ログイン)
+      operationId: post-staff-session
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                staff_login_form:
+                  type: object
+                  description: ログインフォームで入力された値を格納したobject
+                  properties:
+                    email:
+                      type: string
+                      description: メールアドレス
+                      example: hoge@example.com
+                    password:
+                      type: string
+                      description: パスワード
+                      example: password
+                  required:
+                    - email
+                    - password
+      responses:
+        '201':
+          description: Created - セッションを作成(ログイン成功)
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: staff_member_id=abcde12345; Path=/; HttpOnly
+        '500':
+          description: Internal Server Error
+    delete:
+      security:
+        - staff_member_id: []
+      tags:
+        - staff
+      summary: /session
+      description: 職員ユーザーのログインセッションを削除する
+      operationId: delete-staff-session
+      responses:
+        '200':
+          description: OK - セッションを削除(ログアウト)
+        '500':
+          description: Internal Server Error
+
+components:
+  schemas: {}
+  securitySchemes:
+    staff_member_id:
+      type: apiKey
+      in: cookie
+      name: staff_member_id
+
+tags:
+  - name: admin
+  - name: customer
+  - name: staff
